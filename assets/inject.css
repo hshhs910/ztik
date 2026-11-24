@@ -1,0 +1,72 @@
+/* ztik UI cleanup: stable attribute/href selectors only (no hashed classes, never hide video containers) */
+
+/* Upload & TikTok Studio */
+a[href^="/upload"],
+a[href*="tiktok.com/upload"],
+a[href^="/tiktokstudio"],
+a[href*="tiktok.com/tiktokstudio"],
+a[href*="studio.tiktok.com"],
+a[href^="/creator-center/upload"],
+a[href*="tiktok.com/creator-center/upload"],
+[data-e2e="upload-icon"],
+[data-e2e="nav-upload"],
+[data-e2e="upload-btn"],
+[data-e2e="header-upload"],
+/* Get Coins */
+a[href^="/coin"],
+a[href*="tiktok.com/coin"],
+a[href^="/wallet"],
+a[href*="tiktok.com/wallet"],
+[data-e2e="get-coins"],
+[data-e2e="get-coin"],
+[data-e2e="nav-coins"],
+[data-e2e="profile-get-coins"],
+[data-e2e="coin-entry"],
+/* Get App */
+a[href^="/download"],
+a[href*="tiktok.com/download"],
+a[href*="onelink.me"],
+[data-e2e="get-app"],
+[data-e2e="top-get-app"],
+[data-e2e="nav-get-app"],
+[data-e2e="get-app-btn"],
+[data-e2e="bottom-get-app"],
+[data-e2e="download-app"],
+[data-e2e="install-app"],
+[data-e2e="floating-get-app"],
+[data-e2e="promote-download"],
+/* Promote Post */
+a[href^="/promote"],
+a[href*="tiktok.com/promote"],
+a[href*="ads.tiktok.com"],
+[data-e2e="promote"],
+[data-e2e="promote-post"],
+[data-e2e="promote-btn"],
+[data-e2e="video-promote"],
+[data-e2e="profile-promote"],
+/* Elements hidden safely by ztik MutationObserver */
+[data-ztik-hidden="true"] {
+  display: none !important;
+}
+
+/* Mini-player sidebar markers are assigned from stable data-e2e navigation nodes. */
+html.ztik-mini [data-ztik-mini-hide="1"] {
+  display: none !important;
+}
+
+/* Let Home and Explore content use the narrow viewport without changing feed scrolling. */
+html.ztik-mini #main-content-homepage_hot,
+html.ztik-mini main,
+html.ztik-mini [data-e2e="recommend-list-container"],
+html.ztik-mini [data-e2e="recommend-list-item-container"] {
+  box-sizing: border-box !important;
+  margin-left: 0 !important;
+  padding-left: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+html.ztik-mini [data-e2e="recommend-list-container"] {
+  overflow-y: auto !important;
+}

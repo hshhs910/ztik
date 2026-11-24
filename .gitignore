@@ -1,0 +1,7 @@
+/target/
+**/target/
+/.bridge/
+AGENTS.md
+*.log
+.DS_Store
+Thumbs.db

@@ -1,0 +1,32 @@
+[package]
+name = "ztik"
+version = "1.0.0"
+edition = "2021"
+authors = ["hshhs910"]
+license = "MIT"
+repository = "https://github.com/hshhs910/ztik"
+homepage = "https://github.com/hshhs910/ztik"
+description = "Unofficial TikTok desktop client with tray and mini-player controls"
+
+[lib]
+name = "ztik_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = ["tray-icon"] }
+tauri-plugin-single-instance = "2"
+tauri-plugin-global-shortcut = "2"
+
+[target.'cfg(windows)'.dependencies]
+webview2-com = "0.39"
+windows = { version = "0.62", default-features = false }
+
+[profile.release]
+codegen-units = 1
+lto = true
+opt-level = "s"
+panic = "abort"
+strip = true

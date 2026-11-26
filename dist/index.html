@@ -4,11 +4,134 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>ztik</title>
+    <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #000000;
+        color: #ffffff;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+
+      .ztik-splash {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 22px;
+        background: #000000;
+      }
+
+      .ztik-splash-logo {
+        width: 84px;
+        height: 84px;
+        opacity: 1;
+        transform: scale(1) translateZ(0);
+        will-change: transform, opacity;
+      }
+
+      .ztik-splash-logo svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+        overflow: visible;
+      }
+
+      .ztik-splash-bar {
+        position: relative;
+        width: 112px;
+        height: 3px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.14);
+        overflow: hidden;
+      }
+
+      .ztik-splash-bar-fill {
+        position: absolute;
+        inset: 0;
+        width: 52%;
+        border-radius: 999px;
+        background: linear-gradient(90deg, #25f4ee 0%, #ffffff 50%, #fe2c55 100%);
+        transform: translateX(46%) translateZ(0);
+        will-change: transform;
+      }
+
+      @media (prefers-reduced-motion: no-preference) {
+        .ztik-splash-logo {
+          animation: ztik-logo-in 440ms cubic-bezier(0.22, 1, 0.36, 1) both;
+        }
+
+        .ztik-splash-bar-fill {
+          animation: ztik-bar-sweep 900ms cubic-bezier(0.4, 0, 0.2, 1) infinite;
+        }
+      }
+
+      @keyframes ztik-logo-in {
+        from {
+          opacity: 0;
+          transform: scale(0.86) translateZ(0);
+        }
+        to {
+          opacity: 1;
+          transform: scale(1) translateZ(0);
+        }
+      }
+
+      @keyframes ztik-bar-sweep {
+        0% {
+          transform: translateX(-105%) translateZ(0);
+        }
+        100% {
+          transform: translateX(205%) translateZ(0);
+        }
+      }
+    </style>
   </head>
   <body>
-    <main>
-      <h1>ztik</h1>
-      <p>Tauri v2 scaffold ready.</p>
-    </main>
+    <div class="ztik-splash" role="presentation" aria-label="Loading ztik">
+      <div class="ztik-splash-logo">
+        <svg viewBox="0 0 48 48" aria-hidden="true" focusable="false">
+          <path
+            d="M23 7h6c.4 4.8 4.1 8.2 9.5 8.6v5.8c-3.8-.2-7.1-1.5-9.5-3.4V32a11 11 0 1 1-9-10.82v6.24A5 5 0 1 0 23 32V7Z"
+            fill="#25F4EE"
+            transform="translate(-2.2 -2.2)"
+            opacity="0.95"
+          />
+          <path
+            d="M23 7h6c.4 4.8 4.1 8.2 9.5 8.6v5.8c-3.8-.2-7.1-1.5-9.5-3.4V32a11 11 0 1 1-9-10.82v6.24A5 5 0 1 0 23 32V7Z"
+            fill="#FE2C55"
+            transform="translate(2.2 2.2)"
+            opacity="0.95"
+          />
+          <path
+            d="M23 7h6c.4 4.8 4.1 8.2 9.5 8.6v5.8c-3.8-.2-7.1-1.5-9.5-3.4V32a11 11 0 1 1-9-10.82v6.24A5 5 0 1 0 23 32V7Z"
+            fill="#FFFFFF"
+          />
+        </svg>
+      </div>
+      <div class="ztik-splash-bar" aria-hidden="true">
+        <div class="ztik-splash-bar-fill"></div>
+      </div>
+    </div>
+    <script>
+      (function () {
+        'use strict';
+        window.setTimeout(function () {
+          window.location.replace('https://www.tiktok.com/');
+        }, 550);
+      })();
+    </script>
   </body>
 </html>

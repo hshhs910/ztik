@@ -1,11 +1,10 @@
 [package]
 name = "ztik"
-version = "1.0.0"
+version = "1.1.0"
 edition = "2021"
 authors = ["hshhs910"]
 license = "MIT"
 repository = "https://github.com/hshhs910/ztik"
-homepage = "https://github.com/hshhs910/ztik"
 description = "Unofficial TikTok desktop client with tray and mini-player controls"
 
 [lib]
@@ -22,7 +21,7 @@ tauri-plugin-global-shortcut = "2"
 
 [target.'cfg(windows)'.dependencies]
 webview2-com = "0.39"
-windows = { version = "0.62", default-features = false }
+windows = { version = "0.62", default-features = false, features = ["Win32_Foundation", "Win32_Graphics_Dwm", "Win32_System_Diagnostics_ToolHelp", "Win32_System_Memory", "Win32_System_Threading", "Win32_UI_Controls", "Win32_UI_WindowsAndMessaging"] }
 
 [profile.release]
 codegen-units = 1

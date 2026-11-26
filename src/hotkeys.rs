@@ -8,6 +8,7 @@ pub enum HotkeyAction {
     PlayPause,
     NextVideo,
     Repost,
+    DownloadCurrent,
 }
 
 struct HotkeyBinding {
@@ -39,6 +40,12 @@ const HOTKEY_BINDINGS: &[HotkeyBinding] = &[
         label: "Ctrl+Alt+Shift+R",
         modifiers: HOTKEY_MODIFIERS,
         code: Code::KeyR,
+    },
+    HotkeyBinding {
+        action: HotkeyAction::DownloadCurrent,
+        label: "Ctrl+Alt+Shift+D",
+        modifiers: HOTKEY_MODIFIERS,
+        code: Code::KeyD,
     },
 ];
 
@@ -332,6 +339,7 @@ pub(crate) fn script_for_action(action: HotkeyAction) -> &'static str {
         HotkeyAction::PlayPause => PLAY_PAUSE_JS,
         HotkeyAction::NextVideo => NEXT_VIDEO_JS,
         HotkeyAction::Repost => REPOST_JS,
+        HotkeyAction::DownloadCurrent => window::DOWNLOAD_CURRENT_JS,
     }
 }
 
@@ -359,8 +367,8 @@ mod tests {
     use tauri_plugin_global_shortcut::Shortcut;
 
     #[test]
-    fn hotkeys_have_three_distinct_bindings_and_one_way_scripts() {
-        assert_eq!(HOTKEY_BINDINGS.len(), 3);
+    fn hotkeys_have_distinct_bindings_and_one_way_scripts() {
+        assert_eq!(HOTKEY_BINDINGS.len(), 4);
 
         let mut ids = Vec::new();
         for binding in HOTKEY_BINDINGS {
@@ -384,5 +392,6 @@ mod tests {
         assert!(script_for_action(HotkeyAction::PlayPause).contains(".play()"));
         assert!(script_for_action(HotkeyAction::NextVideo).contains("scrollIntoView"));
         assert!(script_for_action(HotkeyAction::Repost).contains("repost"));
+        assert!(script_for_action(HotkeyAction::DownloadCurrent).contains("__ztikDownloadCurrent"));
     }
 }

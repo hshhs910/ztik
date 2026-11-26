@@ -11,10 +11,14 @@ pub const TRAY_ID: &str = "ztik-tray";
 
 const MENU_SHOW_ID: &str = "tray-show";
 const MENU_MINI_PLAYER_ID: &str = "tray-mini-player";
+const MENU_DOWNLOAD_ID: &str = "tray-download-current";
+const MENU_FREE_MEMORY_ID: &str = "tray-free-memory";
 const MENU_QUIT_ID: &str = "tray-quit";
 
 const MENU_SHOW_LABEL: &str = "Mở ztik";
 const MENU_MINI_PLAYER_LABEL: &str = "Mini-player";
+const MENU_DOWNLOAD_LABEL: &str = "Tải media hiện tại";
+const MENU_FREE_MEMORY_LABEL: &str = "Dọn RAM ngay";
 const MENU_QUIT_LABEL: &str = "Thoát hẳn";
 
 const FALLBACK_ICON_ICO: &[u8] = include_bytes!("../icons/icon.ico");
@@ -23,6 +27,8 @@ const FALLBACK_ICON_ICO: &[u8] = include_bytes!("../icons/icon.ico");
 pub(crate) enum TrayMenuAction {
     ShowWindow,
     ToggleMiniPlayer,
+    DownloadCurrent,
+    FreeMemory,
     QuitApp,
 }
 
@@ -30,6 +36,8 @@ pub(crate) fn resolve_menu_action(id: &str) -> Option<TrayMenuAction> {
     match id {
         MENU_SHOW_ID => Some(TrayMenuAction::ShowWindow),
         MENU_MINI_PLAYER_ID => Some(TrayMenuAction::ToggleMiniPlayer),
+        MENU_DOWNLOAD_ID => Some(TrayMenuAction::DownloadCurrent),
+        MENU_FREE_MEMORY_ID => Some(TrayMenuAction::FreeMemory),
         MENU_QUIT_ID => Some(TrayMenuAction::QuitApp),
         _ => None,
     }
@@ -59,9 +67,32 @@ pub fn create_tray(app: &App) -> tauri::Result<()> {
         false,
         None::<&str>,
     )?;
+    let download_item = MenuItem::with_id(
+        app,
+        MENU_DOWNLOAD_ID,
+        MENU_DOWNLOAD_LABEL,
+        true,
+        None::<&str>,
+    )?;
+    let free_memory_item = MenuItem::with_id(
+        app,
+        MENU_FREE_MEMORY_ID,
+        MENU_FREE_MEMORY_LABEL,
+        true,
+        None::<&str>,
+    )?;
     let quit_item = MenuItem::with_id(app, MENU_QUIT_ID, MENU_QUIT_LABEL, true, None::<&str>)?;
 
-    let menu = Menu::with_items(app, &[&show_item, &mini_player_item, &quit_item])?;
+    let menu = Menu::with_items(
+        app,
+        &[
+            &show_item,
+            &mini_player_item,
+            &download_item,
+            &free_memory_item,
+            &quit_item,
+        ],
+    )?;
 
     let mini_player_item_for_event = mini_player_item.clone();
     let mut builder = TrayIconBuilder::with_id(TRAY_ID)
@@ -86,6 +117,12 @@ pub fn create_tray(app: &App) -> tauri::Result<()> {
                     }) {
                         eprintln!("[ztik][tray] failed to dispatch Mini-player toggle: {err}");
                     }
+                }
+                Some(TrayMenuAction::DownloadCurrent) => {
+                    window::trigger_current_download(app);
+                }
+                Some(TrayMenuAction::FreeMemory) => {
+                    window::trigger_free_memory(app);
                 }
                 Some(TrayMenuAction::QuitApp) => {
                     eprintln!("[ztik][tray] quitting application");
@@ -211,7 +248,8 @@ fn decode_ico_rgba(bytes: &[u8]) -> Option<Image<'static>> {
 mod tests {
     use super::{
         decode_ico_rgba, resolve_menu_action, should_show_window_on_tray_click, TrayMenuAction,
-        FALLBACK_ICON_ICO, MENU_MINI_PLAYER_ID, MENU_MINI_PLAYER_LABEL, MENU_QUIT_ID,
+        FALLBACK_ICON_ICO, MENU_DOWNLOAD_ID, MENU_DOWNLOAD_LABEL, MENU_FREE_MEMORY_ID,
+        MENU_FREE_MEMORY_LABEL, MENU_MINI_PLAYER_ID, MENU_MINI_PLAYER_LABEL, MENU_QUIT_ID,
         MENU_QUIT_LABEL, MENU_SHOW_ID, MENU_SHOW_LABEL,
     };
     use tauri::tray::{MouseButton, MouseButtonState};
@@ -228,6 +266,8 @@ mod tests {
     fn tray_menu_labels_and_action_routing_match_spec() {
         assert_eq!(MENU_SHOW_LABEL, "Mở ztik");
         assert_eq!(MENU_MINI_PLAYER_LABEL, "Mini-player");
+        assert_eq!(MENU_DOWNLOAD_LABEL, "Tải media hiện tại");
+        assert_eq!(MENU_FREE_MEMORY_LABEL, "Dọn RAM ngay");
         assert_eq!(MENU_QUIT_LABEL, "Thoát hẳn");
 
         assert_eq!(
@@ -237,6 +277,14 @@ mod tests {
         assert_eq!(
             resolve_menu_action(MENU_MINI_PLAYER_ID),
             Some(TrayMenuAction::ToggleMiniPlayer)
+        );
+        assert_eq!(
+            resolve_menu_action(MENU_DOWNLOAD_ID),
+            Some(TrayMenuAction::DownloadCurrent)
+        );
+        assert_eq!(
+            resolve_menu_action(MENU_FREE_MEMORY_ID),
+            Some(TrayMenuAction::FreeMemory)
         );
         assert_eq!(
             resolve_menu_action(MENU_QUIT_ID),

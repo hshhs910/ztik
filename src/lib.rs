@@ -25,10 +25,21 @@ pub fn run() {
                 return;
             }
 
-            if matches!(event, WindowEvent::Resized(_)) && win.is_maximized().unwrap_or(false) {
+            if matches!(event, WindowEvent::Resized(_)) {
                 let app_handle = win.app_handle();
-                if window::exit_mini_player_on_maximize(app_handle) {
+                let is_maximized = win.is_maximized().unwrap_or(false);
+                if is_maximized && window::exit_mini_player_on_maximize(app_handle) {
                     tray::set_mini_player_checked(app_handle, false);
+                }
+                if app_handle
+                    .state::<window::WindowState>()
+                    .update_maximized_state(is_maximized)
+                {
+                    if let Some(webview_window) =
+                        app_handle.get_webview_window(window::MAIN_WINDOW_LABEL)
+                    {
+                        window::sync_window_frame_appearance(&webview_window);
+                    }
                 }
             }
 
@@ -36,31 +47,34 @@ pub fn run() {
                 return;
             }
 
+            let app_handle = win.app_handle();
             let is_minimized = match win.is_minimized() {
                 Ok(minimized) => minimized,
                 Err(err) => {
                     eprintln!("[ztik][memory] failed to query is_minimized: {err}");
-                    return;
+                    false
                 }
             };
 
-            let Some(action) = minimize_tracker.update(is_minimized) else {
-                return;
-            };
+            if let Some(action) = minimize_tracker.update(is_minimized) {
+                match action {
+                    memory::MemoryAction::SetLow => memory::notify_minimized(app_handle),
+                    memory::MemoryAction::SetNormal => memory::notify_restored(app_handle),
+                }
+            }
 
-            let Some(webview_window) = win
-                .app_handle()
-                .get_webview_window(window::MAIN_WINDOW_LABEL)
-            else {
-                return;
-            };
-
-            match action {
-                memory::MemoryAction::SetLow => memory::set_low_memory(&webview_window),
-                memory::MemoryAction::SetNormal => memory::set_normal_memory(&webview_window),
+            if let WindowEvent::Focused(focused) = event {
+                if *focused {
+                    if !is_minimized && !window::is_hidden_to_tray(app_handle) {
+                        memory::notify_focused(app_handle);
+                    }
+                } else if !is_minimized && !window::is_hidden_to_tray(app_handle) {
+                    memory::notify_unfocused(app_handle);
+                }
             }
         })
         .setup(|app| {
+            app.manage(memory::MemoryManager::start(app.handle().clone()));
             window::create_main_window(app)?;
             tray::create_tray(app)?;
             hotkeys::register_all(app);

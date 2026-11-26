@@ -49,8 +49,264 @@ a[href*="ads.tiktok.com"],
   display: none !important;
 }
 
+:root {
+  --ztik-titlebar-h: 34px;
+  --ztik-viewport-h: calc(100vh - var(--ztik-titlebar-h));
+}
+
+@supports (height: 100dvh) {
+  :root {
+    --ztik-viewport-h: calc(100dvh - var(--ztik-titlebar-h));
+  }
+}
+
+html.ztik-native-decorations {
+  --ztik-titlebar-h: 0px;
+}
+
+/* Keep the viewport framed strictly below the custom titlebar without stray scrollbars. */
+html {
+  height: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+body {
+  position: relative !important;
+  box-sizing: border-box !important;
+  margin: 0 !important;
+  padding-top: var(--ztik-titlebar-h) !important;
+  height: 100% !important;
+  min-height: 100% !important;
+  max-width: 100% !important;
+  overflow-x: hidden !important;
+}
+
+@supports (overflow-x: clip) {
+  html,
+  body {
+    overflow-x: clip !important;
+  }
+}
+
+html.ztik-native-decorations #ztik-titlebar {
+  display: none !important;
+}
+
+html.ztik-native-decorations body {
+  padding-top: 0 !important;
+}
+
+#app,
+#__next {
+  box-sizing: border-box !important;
+  min-height: var(--ztik-viewport-h) !important;
+}
+
+[data-ztik-fixed-top="1"] {
+  top: var(--ztik-titlebar-h) !important;
+}
+
+[data-ztik-fixed-fullheight="1"] {
+  top: var(--ztik-titlebar-h) !important;
+  height: var(--ztik-viewport-h) !important;
+  max-height: var(--ztik-viewport-h) !important;
+  box-sizing: border-box !important;
+}
+
+[data-ztik-sticky-top="1"] {
+  top: var(--ztik-titlebar-h) !important;
+}
+
+[data-ztik-fullheight="1"] {
+  height: var(--ztik-viewport-h) !important;
+  max-height: var(--ztik-viewport-h) !important;
+  box-sizing: border-box !important;
+}
+
+[data-ztik-maxheight="1"] {
+  max-height: var(--ztik-viewport-h) !important;
+  box-sizing: border-box !important;
+}
+
+[data-e2e="video-player-container"],
+[data-ztik-video-layer="1"] {
+  border-radius: 16px;
+  overflow: hidden;
+  max-height: var(--ztik-viewport-h) !important;
+  box-sizing: border-box !important;
+}
+
+@supports (overflow: clip) {
+  [data-e2e="video-player-container"],
+  [data-ztik-video-layer="1"] {
+    overflow: clip;
+  }
+}
+
+/* Defer offscreen feed/card painting so Chromium releases GPU tiles without scrollbar jumps. */
+@supports (content-visibility: auto) {
+  [data-ztik-offscreen-card="feed"] {
+    content-visibility: auto;
+    contain-intrinsic-size: auto none auto var(--ztik-cv-h, 700px);
+  }
+
+  [data-ztik-offscreen-card="grid"] {
+    content-visibility: auto;
+    contain-intrinsic-size: auto none auto var(--ztik-cv-h, 320px);
+  }
+}
+
+[role="menu"],
+[role="dialog"] {
+  border-radius: 14px;
+}
+
+#ztik-titlebar,
+#ztik-titlebar * {
+  box-sizing: border-box;
+}
+
+#ztik-titlebar {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 2147483646;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: var(--ztik-titlebar-h);
+  padding: 0 7px 0 12px;
+  color: #f5f5f5;
+  background: #0f0f0f;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  font: 12px/1 "Segoe UI", Arial, sans-serif;
+  user-select: none;
+  transition: transform 160ms ease, opacity 160ms ease, background-color 160ms ease, border-radius 160ms ease;
+}
+
+.ztik-titlebar-brand {
+  flex: 0 0 auto;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 650;
+  letter-spacing: 0.2px;
+}
+
+.ztik-titlebar-drag {
+  flex: 1 1 auto;
+  align-self: stretch;
+  min-width: 24px;
+  cursor: move;
+}
+
+.ztik-titlebar-actions {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 3px;
+}
+
+.ztik-titlebar-button {
+  appearance: none;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 26px;
+  padding: 0;
+  color: #e8e8e8;
+  background: transparent;
+  border: 0;
+  border-radius: 9px;
+  font: inherit;
+  cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease, transform 140ms ease;
+}
+
+.ztik-titlebar-button:hover,
+.ztik-titlebar-button:focus-visible {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 9px;
+  outline: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ztik-titlebar-button:active {
+    transform: scale(0.94);
+  }
+}
+
+.ztik-titlebar-button svg {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5px;
+}
+
+.ztik-titlebar-separator {
+  display: block;
+  width: 1px;
+  height: 17px;
+  margin: 0 4px;
+  background: rgba(255, 255, 255, 0.14);
+}
+
+.ztik-titlebar-close:hover,
+.ztik-titlebar-close:focus-visible {
+  color: #fff;
+  background: #fe2c55;
+}
+
+#ztik-download-toast {
+  position: fixed;
+  z-index: 2147483646;
+  left: 50%;
+  bottom: 28px;
+  max-width: calc(100% - 24px);
+  padding: 10px 16px;
+  color: #fff;
+  background: rgba(18, 18, 22, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.36);
+  font: 13px/1.25 "Segoe UI", Arial, sans-serif;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transform: translate(-50%, 10px);
+  transition: transform 160ms ease, opacity 160ms ease, visibility 0s linear 160ms;
+}
+
+#ztik-download-toast.ztik-visible {
+  opacity: 1;
+  visibility: visible;
+  backdrop-filter: blur(12px);
+  transform: translate(-50%, 0);
+  transition: transform 160ms ease, opacity 160ms ease, visibility 0s linear 0s;
+}
+
+html.ztik-mini #ztik-titlebar,
+html.ztik-mini-ui #ztik-titlebar {
+  opacity: 0.72;
+  background: rgba(15, 15, 18, 0.84);
+  backdrop-filter: blur(12px);
+  border-radius: 0 0 14px 14px;
+  transform: translateY(-26px);
+}
+
+html.ztik-mini #ztik-titlebar:hover,
+html.ztik-mini #ztik-titlebar:focus-within,
+html.ztik-mini-ui #ztik-titlebar:hover,
+html.ztik-mini-ui #ztik-titlebar:focus-within {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* Mini-player sidebar markers are assigned from stable data-e2e navigation nodes. */
-html.ztik-mini [data-ztik-mini-hide="1"] {
+html.ztik-mini [data-ztik-mini-hide="1"],
+html.ztik-mini-ui [data-ztik-mini-hide="1"] {
   display: none !important;
 }
 
@@ -58,7 +314,11 @@ html.ztik-mini [data-ztik-mini-hide="1"] {
 html.ztik-mini #main-content-homepage_hot,
 html.ztik-mini main,
 html.ztik-mini [data-e2e="recommend-list-container"],
-html.ztik-mini [data-e2e="recommend-list-item-container"] {
+html.ztik-mini [data-e2e="recommend-list-item-container"],
+html.ztik-mini-ui #main-content-homepage_hot,
+html.ztik-mini-ui main,
+html.ztik-mini-ui [data-e2e="recommend-list-container"],
+html.ztik-mini-ui [data-e2e="recommend-list-item-container"] {
   box-sizing: border-box !important;
   margin-left: 0 !important;
   padding-left: 0 !important;
@@ -67,6 +327,7 @@ html.ztik-mini [data-e2e="recommend-list-item-container"] {
   max-width: 100% !important;
 }
 
-html.ztik-mini [data-e2e="recommend-list-container"] {
+html.ztik-mini [data-e2e="recommend-list-container"],
+html.ztik-mini-ui [data-e2e="recommend-list-container"] {
   overflow-y: auto !important;
 }
